@@ -30,12 +30,14 @@ export const seedDatabase = async () => {
     await Notice.deleteMany();
     await ActivityLog.deleteMany();
 
-    const hashedPassword = await bcrypt.hash('password123', 10);
+    const adminPassword = await bcrypt.hash('Admin@123', 10);
+    const teacherPassword = await bcrypt.hash('Teacher@123', 10);
+    const studentPassword = await bcrypt.hash('Student@123', 10);
 
     const adminUser = await User.create({
       name: 'System Admin',
-      email: 'admin@school.com',
-      password: hashedPassword,
+      email: 'admin@charan.com',
+      password: adminPassword,
       role: 'admin',
       phone: '+1 800-555-0199',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
@@ -44,8 +46,8 @@ export const seedDatabase = async () => {
 
     const teacherUser = await User.create({
       name: 'Dr. Robert Chen',
-      email: 'teacher@school.com',
-      password: hashedPassword,
+      email: 'teacher@charan.com',
+      password: teacherPassword,
       role: 'teacher',
       phone: '+1 800-555-0210',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
@@ -54,8 +56,8 @@ export const seedDatabase = async () => {
 
     const studentUser = await User.create({
       name: 'Alex Johnson',
-      email: 'student@school.com',
-      password: hashedPassword,
+      email: 'student@charan.com',
+      password: studentPassword,
       role: 'student',
       phone: '+1 800-555-0344',
       avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
@@ -67,7 +69,7 @@ export const seedDatabase = async () => {
         studentId: 'STU-2026-001',
         userId: studentUser._id,
         name: 'Alex Johnson',
-        email: 'student@school.com',
+        email: 'student@charan.com',
         phone: '+1 800-555-0344',
         department: 'Computer Science',
         year: '3rd Year',
@@ -91,20 +93,6 @@ export const seedDatabase = async () => {
         photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150',
         guardianName: 'Elena Martinez',
         guardianPhone: '+1 800-555-7766'
-      },
-      {
-        studentId: 'STU-2026-003',
-        name: 'Ethan Smith',
-        email: 'ethan.s@school.com',
-        phone: '+1 800-555-0412',
-        department: 'Electrical Engineering',
-        year: '2nd Year',
-        section: 'B',
-        address: '456 Oak Avenue, Gotham',
-        dob: '2004-01-10',
-        photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150',
-        guardianName: 'David Smith',
-        guardianPhone: '+1 800-555-3322'
       }
     ]);
 
@@ -113,7 +101,7 @@ export const seedDatabase = async () => {
         teacherId: 'TCH-2026-001',
         userId: teacherUser._id,
         name: 'Dr. Robert Chen',
-        email: 'teacher@school.com',
+        email: 'teacher@charan.com',
         phone: '+1 800-555-0210',
         department: 'Computer Science',
         qualification: 'Ph.D. in Computer Science (MIT)',
@@ -131,15 +119,6 @@ export const seedDatabase = async () => {
         semester: '3rd Semester',
         assignedTeacherName: 'Dr. Robert Chen',
         description: 'Fundamental data structures and sorting algorithms.'
-      },
-      {
-        courseCode: 'CS302',
-        courseName: 'Full Stack Web Engineering',
-        department: 'Computer Science',
-        credits: 3,
-        semester: '5th Semester',
-        assignedTeacherName: 'Dr. Robert Chen',
-        description: 'Modern full stack software architecture and web development.'
       }
     ]);
 
@@ -149,14 +128,12 @@ export const seedDatabase = async () => {
     await Notice.create(mockData.notices);
     await ActivityLog.create(mockData.activityLogs);
 
-    console.log('[Seeder] Database populated successfully with demo data!');
-    process.exit(0);
+    console.log('[Seeder] Database populated successfully with charan.com accounts!');
   } catch (error) {
     console.error('[Seeder Error]', error.message);
-    process.exit(1);
   }
 };
 
 if (process.argv[1]?.endsWith('seeder.js')) {
-  seedDatabase();
+  seedDatabase().then(() => process.exit(0));
 }

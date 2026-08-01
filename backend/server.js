@@ -53,13 +53,14 @@ app.get('/api/health', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-// Connect to Database (or activate mock fallback) and start server
-const PORT = process.env.PORT || 5000;
+// Connect DB asynchronously
+connectDB();
 
-connectDB().then(() => {
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`[SMS Backend Server] Listening on http://localhost:${PORT}`);
   });
-});
+}
 
-
+export default app;

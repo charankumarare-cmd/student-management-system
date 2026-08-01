@@ -16,7 +16,7 @@ export const registerUser = async (req, res) => {
       const newUser = {
         _id: 'usr_' + Date.now(),
         name,
-        email,
+        email: email.toLowerCase(),
         password: hashedPassword,
         role: role || 'student',
         phone: phone || '',
@@ -32,12 +32,12 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: email.toLowerCase() });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = await User.create({ name, email, password, role, phone });
+    const user = await User.create({ name, email: email.toLowerCase(), password, role, phone });
     const token = generateToken(user._id, user.role);
 
     res.status(201).json({
@@ -53,12 +53,22 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Please provide both email and password' });
+    }
+
+    const lowerEmail = email.trim().toLowerCase();
+
     if (getIsInMemory()) {
-      const user = mockData.users.find(u => u.email.toLowerCase() === email.toLowerCase());
-      if (!user) return res.status(401).json({ message: 'Invalid credentials' });
+      const user = mockData.users.find(u => u.email.toLowerCase() === lowerEmail);
+      if (!user) {
+        return res.status(401).json({ message: 'Invalid Email or Password' });
+      }
 
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+      if (!isMatch) {
+        return res.status(401).json({ message: 'Invalid Email or Password' });
+      }
 
       const token = generateToken(user._id, user.role);
       return res.json({
@@ -67,7 +77,7 @@ export const loginUser = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: lowerEmail });
     if (user && (await user.matchPassword(password))) {
       const token = generateToken(user._id, user.role);
       return res.json({
@@ -75,7 +85,7 @@ export const loginUser = async (req, res) => {
         user: { _id: user._id, name: user.name, email: user.email, role: user.role, avatar: user.avatar, phone: user.phone }
       });
     } else {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid Email or Password' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
