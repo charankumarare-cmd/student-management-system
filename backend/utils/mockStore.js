@@ -5,8 +5,19 @@ export const mockData = {
     {
       _id: 'usr_admin1',
       name: 'System Admin',
+      email: 'admin@school.com',
+      password: '',
+      role: 'admin',
+      phone: '+1 800-555-0199',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      status: 'active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: 'usr_admin2',
+      name: 'Charan Admin',
       email: 'admin@charan.com',
-      password: '', // populated in init
+      password: '',
       role: 'admin',
       phone: '+1 800-555-0199',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
@@ -15,6 +26,17 @@ export const mockData = {
     },
     {
       _id: 'usr_teacher1',
+      name: 'Dr. Robert Chen',
+      email: 'teacher@school.com',
+      password: '',
+      role: 'teacher',
+      phone: '+1 800-555-0210',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+      status: 'active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: 'usr_teacher2',
       name: 'Dr. Robert Chen',
       email: 'teacher@charan.com',
       password: '',
@@ -26,6 +48,17 @@ export const mockData = {
     },
     {
       _id: 'usr_student1',
+      name: 'Alex Johnson',
+      email: 'student@school.com',
+      password: '',
+      role: 'student',
+      phone: '+1 800-555-0344',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+      status: 'active',
+      createdAt: new Date().toISOString()
+    },
+    {
+      _id: 'usr_student2',
       name: 'Alex Johnson',
       email: 'student@charan.com',
       password: '',
@@ -42,7 +75,7 @@ export const mockData = {
       studentId: 'STU-2026-001',
       userId: 'usr_student1',
       name: 'Alex Johnson',
-      email: 'student@charan.com',
+      email: 'student@school.com',
       phone: '+1 800-555-0344',
       department: 'Computer Science',
       year: '3rd Year',
@@ -105,7 +138,7 @@ export const mockData = {
       teacherId: 'TCH-2026-001',
       userId: 'usr_teacher1',
       name: 'Dr. Robert Chen',
-      email: 'teacher@charan.com',
+      email: 'teacher@school.com',
       phone: '+1 800-555-0210',
       department: 'Computer Science',
       qualification: 'Ph.D. in Computer Science (MIT)',
@@ -180,15 +213,23 @@ export const mockData = {
     { _id: 'ntc_3', title: 'Faculty Development Workshop on AI in Education', description: 'Mandatory workshop for all faculty members on integrating modern AI tools into curriculum design.', targetAudience: 'Teachers', author: 'Principal Office', date: '2026-07-20', priority: 'Low' }
   ],
   activityLogs: [
-    { _id: 'act_1', action: 'User Login', performedBy: 'admin@charan.com', role: 'admin', details: 'Admin logged into portal', timestamp: new Date(Date.now() - 3600000).toISOString() },
-    { _id: 'act_2', action: 'Attendance Marked', performedBy: 'teacher@charan.com', role: 'teacher', details: 'Marked daily attendance for Course CS301', timestamp: new Date(Date.now() - 7200000).toISOString() },
-    { _id: 'act_3', action: 'Fee Payment Recorded', performedBy: 'admin@charan.com', role: 'admin', details: 'Recorded payment of $2500 for STU-2026-001', timestamp: new Date(Date.now() - 86400000).toISOString() }
+    { _id: 'act_1', action: 'User Login', performedBy: 'admin@school.com', role: 'admin', details: 'Admin logged into portal', timestamp: new Date(Date.now() - 3600000).toISOString() },
+    { _id: 'act_2', action: 'Attendance Marked', performedBy: 'teacher@school.com', role: 'teacher', details: 'Marked daily attendance for Course CS301', timestamp: new Date(Date.now() - 7200000).toISOString() },
+    { _id: 'act_3', action: 'Fee Payment Recorded', performedBy: 'admin@school.com', role: 'admin', details: 'Recorded payment of $2500 for STU-2026-001', timestamp: new Date(Date.now() - 86400000).toISOString() }
   ]
 };
 
-// Initialize pre-hashed passwords securely using bcrypt for mock store
+// Initialize pre-hashed passwords for mock users
 (async () => {
-  mockData.users[0].password = await bcrypt.hash('Admin@123', 10);
-  mockData.users[1].password = await bcrypt.hash('Teacher@123', 10);
-  mockData.users[2].password = await bcrypt.hash('Student@123', 10);
+  const hashDefault = await bcrypt.hash('password123', 10);
+  const hashAdminCharan = await bcrypt.hash('Admin@123', 10);
+  const hashTeacherCharan = await bcrypt.hash('Teacher@123', 10);
+  const hashStudentCharan = await bcrypt.hash('Student@123', 10);
+
+  mockData.users.forEach((u) => {
+    if (u.email === 'admin@charan.com') u.password = hashAdminCharan;
+    else if (u.email === 'teacher@charan.com') u.password = hashTeacherCharan;
+    else if (u.email === 'student@charan.com') u.password = hashStudentCharan;
+    else u.password = hashDefault;
+  });
 })();
